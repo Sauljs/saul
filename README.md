@@ -20,11 +20,11 @@ We're building a autogeneated backend api, so you can worry about your customers
 ```
 - api/ #This is where the magic happens
 	- helpers/ #Saul needs helpers
-    	- createSchema.js #Used to build the schemas as needed for the api.js 
-    	- db.js #Used to initate db connection
-    	- permissions #Functions to verify permissions
-    - api.js #File where we generate the api based on the api-config.js parsed when running the index.js
-    - index.js #Project index is where all the modules are ran from
+		- createSchema.js #Used to build the schemas as needed for the api.js 
+		- db.js #Used to initate db connection
+		- permissions #Functions to verify permissions
+	- api.js #File where we generate the api based on the api-config.js parsed when running the index.js
+	- index.js #Project index is where all the modules are ran from
 - example/ #Frontend example using the api
 - saul-config.js #Config the api using mongoose
 - index.js #Example code
@@ -85,15 +85,15 @@ module.exports = [
 ```javascript
 let routeConfig = require('./saul-config');
 let options = {
-  baseUrl: '/api',
-  routeConfig: routeConfig, // Get the routing config you made
-  cache: true, //Toggle if it should utilize redis caching
-  allowed_permissions: {
-    super_admin: 5000,
-    admin: 1000,
-    moderator: 750,
-    std_user: 500
-  } // Define a permissions array and defining an integer that represent the role in value, the higher the number the higher the permissions
+	baseUrl: '/api',
+	routeConfig: routeConfig, // Get the routing config you made
+	cache: true, //Toggle if it should utilize redis caching
+	allowed_permissions: {
+		super_admin: 5000,
+		admin: 1000,
+		moderator: 750,
+		std_user: 500
+	} // Define a permissions array and defining an integer that represent the role in value, the higher the number the higher the permissions
 };
 
 let Saul = Saul(options);
