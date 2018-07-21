@@ -1,0 +1,72 @@
+/*/ -------------------------------- /*/
+///      Setup global veriables      ///
+/*/ -------------------------------- /*/
+
+// Prep express
+var express = require('express');
+var app = express();
+//var server = require('http').createServer(app);
+
+// Get other modules
+var path = require('path');
+var cors = require('cors')
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var morgan = require('morgan');
+var config = require('config');
+
+// Vars
+var port = process.env.PORT || config.get('port') || 3000;
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+// Read cookies and json
+app.use(cors(corsOptions));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser(config.get('cookiesecret')));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+
+// Security middleware
+// app.use('/api/', [checkToken, checkPermission]);
+var routeConfig = require('./api-config');
+var Saul = require('./api/api');
+var saul = Saul({
+  //socket: false,
+  baseUrl: config.get('baseApiUrl'),
+  routeConfig: routeConfig,
+  cache: true,
+  allowed_permissions: {
+    super_admin: 5000,
+    admin: 1000,
+    moderator: 750,
+    std_user: 500
+  }
+});
+
+app.use('/api', saul);
+
+//app.use('/api', apiRoutes);
+
+app.get('/', function(req, res) {
+	res.sendFile(__dirname + '/index.html');
+});
+
+// Error logging
+app.use(morgan('combined', {
+  skip: (req, res) => {
+    return res.statusCode < 400;
+  }
+}));
+
+/**
+ *  Start up the engine
+ */
+app.listen(port, function() {
+	console.log('Express server listening on port: %d', port);
+});
