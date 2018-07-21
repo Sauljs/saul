@@ -1,8 +1,0 @@
-{
-	"baseApiUrl": "/api",
-	"cookiesecret": "somesecret",
-	"port": "3000",
-	"db": {
-		"url": "mongodb://localhost/saul"
-	}
-}

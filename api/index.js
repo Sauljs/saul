@@ -1,12 +1,7 @@
-var api = require('./api');
-var mongoose = require('./helpers/db');
+let createSchema = require('./helpers/createSchema')
+let api = require('./api')
 
-module.exports = function(options) {
-	var db = mongoose.connection;
-
-	db.on('error', console.error.bind(console, 'connection error:'));
-
-	db.once('open', function() {
-		return api(options);
-	});
+module.exports = {
+	api: api,
+	createSchema: createSchema
 }

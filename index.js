@@ -13,10 +13,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var morgan = require('morgan');
-var config = require('config');
 
 // Vars
-var port = process.env.PORT || config.get('port') || 3000;
+var port = process.env.PORT || 3000;
 var corsOptions = {
   origin: '*',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -25,7 +24,7 @@ var corsOptions = {
 // Read cookies and json
 app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cookieParser(config.get('cookiesecret')));
+app.use(cookieParser('somesecret'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -33,9 +32,11 @@ app.use(bodyParser.urlencoded({
 
 // Security middleware
 // app.use('/api/', [checkToken, checkPermission]);
-var routeConfig = require('./api-config');
-var Saul = require('./api/index')({
-  baseUrl: config.get('baseApiUrl'),
+var routeConfig = require('./saul-config');
+var Saul = require('./api/index').api({
+  //socket: false,
+  baseUrl: '/api',
+  databaseUrl: 'mongodb://localhost/saul',
   routeConfig: routeConfig,
   cache: true,
   allowed_permissions: {
@@ -48,9 +49,7 @@ var Saul = require('./api/index')({
 
 app.use('/api', Saul);
 
-app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/index.html');
-});
+//app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 
 // Error logging
 app.use(morgan('combined', {

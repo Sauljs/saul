@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var createSchema = require('./api/createSchema');
 
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;

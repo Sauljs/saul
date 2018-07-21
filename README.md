@@ -1,4 +1,3 @@
-
 # Saul
 Backend REST api without the headache
 
@@ -21,11 +20,8 @@ We're building a autogeneated backend api, so you can worry about your customers
 ```
 - api/ #This is where the magic happens
     - api.js #File where we generate the api based on the api-config.js parsed when running the index.js
-    - auth-facebook.js #Testing support for jwt based api connection
     - createSchema.js #Used to build the schemas as needed for the api.js
-    - index.js #The wrapper to initate the database when we startup the project
-- config/ #Example code
-- public/ #Example code
+- example/ #Frontend example using the api
 - api-config.js #Config the api using mongoose
 - index.js #Example code
 ```
@@ -36,12 +32,51 @@ We're building a autogeneated backend api, so you can worry about your customers
 * require Saul `const Saul = require('sauljs')`
 * Create a saul-config.js
 
-```
-Documentation is coming
+```javascript
+// Declare primary schemas
+module.exports = [
+	{
+		apiName: 'user', // Define a name for your api this will result in baseUrl + '/user'
+		fields: {
+			email: String,
+			password: String,
+			birthdate: Number
+		},	// Here we define the field settings just like in mongoose this is actually forwarded to the mongoose api so the fields work just like mongoose
+		hiddenFields: ['password'], Here you can define which fields you dont what to return like a password maybe
+		settings: {
+			timestamps: true
+		}, // This settings object is passed on to mongoose as is so you can define all setings in mongoose right here
+		access: {
+			getOne: 'std_user',
+			get: 'moderator',
+			create: 'moderator',
+			update: 'moderator',
+			del: 1000 // Admin
+		}, // In this section you can define pr method which access level you need to have to do a certain operation, default is that everything is accessable
+		middleware: {
+			pre: {
+				// Modify requests before they hit the database
+				// All methods is allowed getOne, get, create, update & del
+				getOne: function(req, res, next) {
+					next();
+				}
+			},
+			post: {
+				// Modify requests after they return from the database
+				// All methods is allowed getOne, get, create, update & del
+				getOne: function(req, res, next) {
+					var result = req.apiResult;
+
+					res.status(200).json(result);
+				}
+			}
+		}
+	}
+];
 ```
 
 * Initiate Saul
-```
+```javascript
 let routeConfig = require('./saul-config');
 let options = {
   baseUrl: '/api',

@@ -1,11 +1,8 @@
 // Include modules
 var express = require('express');
 var route = express.Router();
-var config = require('config');
 var _ = require('lodash');
 var Promise = require('bluebird');
-
-var createSchema = require('./createSchema');
 
 
 // TODO - Support one to squillions
@@ -41,10 +38,16 @@ module.exports = function(options) {
 		return new Error('Missing options check https://...');
 	}
 
+	if (options && !options.databaseUrl) {
+		return new Error('Missing databaseUrl in options objects parse to Saul');
+	}
+
 	options.baseUrl = options.baseUrl || '/api';
 	options.cache = hasValue(options.cache) ? options.cache : false;
 	options.allowed_permissions = hasValue(options.allowed_permissions) ? options.allowed_permissions : defaultPermissions;
 
+	var mongoose = require('./helpers/db')(options.databaseUrl);
+	var createSchema = require('./helpers/createSchema')(mongoose);
 	var PERM = require('./helpers/permissions')(options.allowed_permissions);
 
 	console.log("PERM.ha(1000, 'admin'): ", PERM.ha(1000, 'admin'));
@@ -84,8 +87,6 @@ module.exports = function(options) {
 				route.delete(obj.deleteUrl, obj.operations.del);
 			})
 		});
-
-	
 
 	function createRoutes(apiObj) {
 		return new Promise(function(resolve, reject) {
