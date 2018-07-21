@@ -4,18 +4,6 @@ var createSchema = require('./api/createSchema');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
-
-// Declare sub schemas
-// var Blocks = createSchema({
-// 	apiName: 'blocks',
-// 	fields: {
-// 		text: String
-// 	},
-// 	settings: {
-// 		timestamps: true
-// 	}
-// });
-
 var Blocks = new Schema({ 
 	text: String 
 });

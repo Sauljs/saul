@@ -5,7 +5,6 @@
 // Prep express
 var express = require('express');
 var app = express();
-//var server = require('http').createServer(app);
 
 // Get other modules
 var path = require('path');
@@ -35,9 +34,7 @@ app.use(bodyParser.urlencoded({
 // Security middleware
 // app.use('/api/', [checkToken, checkPermission]);
 var routeConfig = require('./api-config');
-var Saul = require('./api/api');
-var saul = Saul({
-  //socket: false,
+var Saul = require('./api/index')({
   baseUrl: config.get('baseApiUrl'),
   routeConfig: routeConfig,
   cache: true,
@@ -49,11 +46,9 @@ var saul = Saul({
   }
 });
 
-app.use('/api', saul);
+app.use('/api', Saul);
 
-//app.use('/api', apiRoutes);
-
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/index.html');
 });
 
@@ -67,6 +62,6 @@ app.use(morgan('combined', {
 /**
  *  Start up the engine
  */
-app.listen(port, function() {
+app.listen(port, () => {
 	console.log('Express server listening on port: %d', port);
 });
